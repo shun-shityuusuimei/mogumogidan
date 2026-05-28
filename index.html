@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>もぐもぐ団 | MapleStory Guild</title>
+<link href="https://fonts.googleapis.com/css2?family=Zen+Maru+Gothic:wght@400;500;700;900&family=DotGothic16&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FFF8F0;
+    --bg2: #FFF0E0;
+    --primary: #FF7043;
+    --primary-light: #FF9B6B;
+    --primary-dark: #E64A19;
+    --accent: #FFD54F;
+    --accent2: #66BB6A;
+    --accent3: #42A5F5;
+    --text: #3E2723;
+    --text-light: #795548;
+    --card: #FFFFFF;
+    --border: #FFD0B0;
+    --shadow: rgba(255,112,67,0.15);
+    --pixel: 'DotGothic16', monospace;
+    --round: 16px;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Zen Maru Gothic', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+  body::before {
+    content: ''; position: fixed; inset: 0; pointer-events: none; z-index: 0;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(255,213,79,0.15) 0%, transparent 30%),
+      radial-gradient(circle at 90% 80%, rgba(255,112,67,0.1) 0%, transparent 30%),
+      radial-gradient(circle at 50% 50%, rgba(102,187,106,0.08) 0%, transparent 50%);
+  }
+
+  /* HEADER */
+  header {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    position: relative; overflow: hidden;
+    box-shadow: 0 4px 20px var(--shadow);
+  }
+  header::before {
+    content: ''; position: absolute; inset: 0;
+    background: repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(255,255,255,0.04) 3px,rgba(255,255,255,0.04) 4px),
+                repeating-linear-gradient(90deg,transparent,transparent 3px,rgba(255,255,255,0.04) 3px,rgba(255,255,255,0.04) 4px);
+  }
+  .header-inner { position:relative;z-index:1;display:flex;align-items:center;gap:24px;padding:28px 48px;max-width:1100px;margin:0 auto; }
+  .logo-wrap { flex-shrink:0; animation: bounce 2s ease-in-out infinite; }
+  @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+  .guild-title { color:#fff; }
+  .guild-title .tag { font-family:var(--pixel);font-size:11px;letter-spacing:3px;opacity:.85;background:rgba(255,255,255,.2);padding:2px 10px;border-radius:20px;display:inline-block;margin-bottom:6px; }
+  .guild-title h1 { font-size:38px;font-weight:900;letter-spacing:2px;text-shadow:3px 3px 0 rgba(0,0,0,.2);line-height:1; }
+  .guild-title .sub { font-size:13px;opacity:.9;margin-top:6px;font-family:var(--pixel); }
+  .header-badges { margin-left:auto;display:flex;flex-direction:column;gap:8px;align-items:flex-end; }
+  .badge { font-family:var(--pixel);font-size:11px;padding:4px 14px;border-radius:20px;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.35); }
+  .badge.yellow{background:rgba(255,213,79,.35)} .badge.green{background:rgba(102,187,106,.35)}
+
+  /* NAV */
+  nav { background:var(--card);border-bottom:3px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 2px 10px var(--shadow); }
+  nav ul { list-style:none;display:flex;max-width:1100px;margin:0 auto;padding:0 48px; }
+  nav a { display:block;padding:14px 22px;font-family:var(--pixel);font-size:13px;color:var(--text-light);text-decoration:none;position:relative;transition:color .2s;cursor:pointer; }
+  nav a::after { content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:0;height:3px;background:var(--primary);border-radius:2px 2px 0 0;transition:width .2s; }
+  nav a:hover{color:var(--primary)} nav a:hover::after{width:60%}
+  nav a.active{color:var(--primary)} nav a.active::after{width:60%}
+
+  /* MAIN */
+  main { max-width:1100px;margin:0 auto;padding:40px 48px 80px;position:relative;z-index:1; }
+
+  .section { display:none; }
+  .section.active { display:block; }
+
+  /* SECTION TITLE */
+  .section-title { display:flex;align-items:center;gap:12px;margin-bottom:28px;margin-top:60px; }
+  .section-title:first-child{margin-top:0}
+  .section-title .icon { width:40px;height:40px;background:var(--primary);border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;box-shadow:3px 3px 0 var(--primary-dark); }
+  .section-title h2 { font-size:22px;font-weight:900;letter-spacing:1px;font-family:var(--pixel); }
+  .section-title .count { margin-left:auto;font-family:var(--pixel);font-size:12px;color:var(--text-light);background:var(--bg2);padding:4px 12px;border-radius:20px;border:1px solid var(--border); }
+
+  /* HERO CARD */
+  .hero-card { background:var(--card);border-radius:20px;border:2px solid var(--border);padding:36px 40px;display:grid;grid-template-columns:1fr 1fr;gap:32px;margin-bottom:20px;box-shadow:0 4px 20px var(--shadow),6px 6px 0 var(--border);position:relative;overflow:hidden; }
+  .hero-card::before { content:'🍙';position:absolute;right:-10px;top:-10px;font-size:120px;opacity:.06;transform:rotate(15deg); }
+  .hero-left h3 { font-family:var(--pixel);font-size:13px;color:var(--primary);margin-bottom:10px;letter-spacing:1px; }
+  .hero-left p { font-size:14px;line-height:1.9;color:var(--text-light); }
+  .hero-left .highlight { background:linear-gradient(transparent 60%,rgba(255,213,79,.5) 60%);font-weight:700;color:var(--text); }
+  .info-grid { display:flex;flex-direction:column;gap:12px; }
+  .info-item { display:flex;align-items:center;gap:12px;background:var(--bg);border-radius:12px;padding:10px 16px;border:1px solid var(--border); }
+  .info-item .label { font-family:var(--pixel);font-size:11px;color:var(--text-light);width:90px;flex-shrink:0; }
+  .info-item .value { font-size:13px;font-weight:700;color:var(--text); }
+  .info-item a.value { color:var(--accent3);text-decoration:none;font-family:var(--pixel); }
+  .info-item a.value:hover{text-decoration:underline}
+
+  /* DISCORD BANNER */
+  .discord-banner { background:#5865F2;border-radius:var(--round);padding:20px 28px;display:flex;align-items:center;gap:20px;color:#fff;margin-bottom:32px;box-shadow:4px 4px 0 #3c48c4; }
+  .discord-icon{font-size:36px}
+  .discord-text .title{font-family:var(--pixel);font-size:14px;margin-bottom:4px}
+  .discord-text .sub{font-size:13px;opacity:.85}
+  .discord-btn { margin-left:auto;background:rgba(255,255,255,.2);color:#fff;border:1px solid rgba(255,255,255,.4);border-radius:10px;padding:8px 20px;font-family:var(--pixel);font-size:12px;cursor:pointer;text-decoration:none;transition:background .2s;white-space:nowrap; }
+  .discord-btn:hover{background:rgba(255,255,255,.3)}
+
+  /* MEMBER GRID */
+  .member-grid { display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:20px; }
+
+  .member-card { background:var(--card);border-radius:var(--round);border:2px solid var(--border);padding:24px;box-shadow:4px 4px 0 var(--border);transition:transform .15s,box-shadow .15s;position:relative;overflow:hidden; }
+  .member-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--border)}
+  .member-role-badge { position:absolute;top:16px;right:16px;font-family:var(--pixel);font-size:10px;padding:3px 10px;border-radius:20px;background:var(--accent);color:var(--text); }
+  .member-role-badge.master{background:var(--primary);color:#fff}
+  .member-role-badge.sub{background:var(--accent3);color:#fff}
+
+  .member-avatar { width:72px;height:72px;border-radius:14px;background:var(--bg2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:36px;margin-bottom:14px;box-shadow:3px 3px 0 var(--border);overflow:hidden; }
+  .member-avatar img { width:100%;height:100%;object-fit:cover; }
+  .member-name { font-family:var(--pixel);font-size:16px;font-weight:700;margin-bottom:4px; }
+  .member-class { font-family:var(--pixel);font-size:11px;color:var(--primary);margin-bottom:12px; }
+  .member-bio { font-size:13px;line-height:1.8;color:var(--text-light);margin-bottom:14px;min-height:56px; }
+  .member-tags { display:flex;flex-wrap:wrap;gap:6px; }
+  .tag-chip { font-family:var(--pixel);font-size:10px;padding:3px 10px;border-radius:20px;background:var(--bg2);border:1px solid var(--border);color:var(--text-light); }
+  .member-delete { position:absolute;bottom:14px;right:14px;background:none;border:none;color:var(--border);cursor:pointer;font-size:16px;transition:color .2s; }
+  .member-delete:hover{color:#e53935}
+
+  /* ADD MEMBER CARD */
+  .add-member-card { border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:220px;cursor:pointer;transition:all .2s;border-radius:var(--round);border:2px dashed var(--border);background:var(--card); }
+  .add-member-card:hover{border-color:var(--primary);background:var(--bg2);transform:translate(-2px,-2px)}
+  .add-member-card .plus{font-size:36px;margin-bottom:10px}
+  .add-member-card .txt{font-family:var(--pixel);font-size:12px;color:var(--text-light);line-height:1.8}
+
+  /* EVENTS */
+  .event-list { display:flex;flex-direction:column;gap:16px; }
+  .event-card { background:var(--card);border-radius:var(--round);border:2px solid var(--border);padding:20px 24px;display:grid;grid-template-columns:80px 1fr auto;gap:20px;align-items:center;box-shadow:4px 4px 0 var(--border);transition:transform .15s,box-shadow .15s; }
+  .event-card:hover{transform:translate(-2px,-2px);box-shadow:6px 6px 0 var(--border)}
+  .event-date { text-align:center;background:var(--primary);color:#fff;border-radius:12px;padding:10px 8px;box-shadow:3px 3px 0 var(--primary-dark); }
+  .event-date .month{font-family:var(--pixel);font-size:10px;opacity:.9}
+  .event-date .day{font-family:var(--pixel);font-size:26px;line-height:1;font-weight:900}
+  .event-info .title{font-family:var(--pixel);font-size:15px;font-weight:700;margin-bottom:4px}
+  .event-info .desc{font-size:13px;color:var(--text-light);line-height:1.6}
+  .event-status{font-family:var(--pixel);font-size:11px;padding:5px 14px;border-radius:20px;white-space:nowrap}
+  .event-status.upcoming{background:rgba(102,187,106,.15);color:var(--accent2);border:1px solid var(--accent2)}
+  .event-status.done{background:var(--bg2);color:var(--text-light);border:1px solid var(--border)}
+  .event-status.tbd{background:rgba(255,213,79,.2);color:#B7950B;border:1px solid var(--accent)}
+
+  /* ===== MODAL OVERLAY ===== */
+  .overlay { position:fixed;inset:0;background:rgba(62,39,35,.55);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px); }
+  .overlay.open{display:flex}
+
+  .modal { background:var(--card);border-radius:20px;padding:36px 40px;width:90%;max-width:480px;border:2px solid var(--border);box-shadow:8px 8px 0 var(--border),0 20px 60px rgba(0,0,0,.2);position:relative;max-height:90vh;overflow-y:auto; }
+  .modal h3 { font-family:var(--pixel);font-size:17px;margin-bottom:20px;color:var(--primary); }
+  .modal-close { position:absolute;top:16px;right:20px;background:none;border:none;font-size:22px;cursor:pointer;color:var(--text-light);transition:color .2s; }
+  .modal-close:hover{color:var(--primary)}
+
+  .form-row { margin-bottom:16px; }
+  .form-row label { font-family:var(--pixel);font-size:11px;color:var(--text-light);display:block;margin-bottom:6px; }
+  .form-row input,.form-row textarea,.form-row select {
+    width:100%;background:var(--bg);border:2px solid var(--border);border-radius:10px;
+    padding:10px 14px;color:var(--text);font-family:'Zen Maru Gothic',sans-serif;font-size:14px;
+    outline:none;transition:border-color .2s;
+  }
+  .form-row input:focus,.form-row textarea:focus,.form-row select:focus{border-color:var(--primary)}
+  .form-row textarea{resize:vertical;min-height:70px}
+  .form-row .hint{font-size:11px;color:var(--text-light);margin-top:4px;font-family:var(--pixel)}
+
+  /* 画像アップロードエリア */
+  .img-upload-area { border:2px dashed var(--border);border-radius:12px;padding:20px;text-align:center;cursor:pointer;transition:all .2s;background:var(--bg);position:relative;overflow:hidden; }
+  .img-upload-area:hover{border-color:var(--primary);background:var(--bg2)}
+  .img-upload-area input[type=file]{position:absolute;inset:0;opacity:0;cursor:pointer;}
+  .img-upload-area .preview { width:80px;height:80px;border-radius:12px;object-fit:cover;border:2px solid var(--border);display:none;margin:0 auto 8px; }
+  .img-upload-area .placeholder-txt{font-family:var(--pixel);font-size:11px;color:var(--text-light);line-height:1.8}
+  .img-upload-area .upload-icon{font-size:28px;margin-bottom:6px}
+
+  .tags-input { display:flex;flex-wrap:wrap;gap:6px;align-items:center;background:var(--bg);border:2px solid var(--border);border-radius:10px;padding:8px 12px;min-height:44px; }
+  .tags-input input{border:none;background:transparent;outline:none;font-family:'Zen Maru Gothic',sans-serif;font-size:13px;flex:1;min-width:80px;color:var(--text)}
+  .tag-pill{background:var(--primary);color:#fff;border-radius:20px;padding:2px 10px;font-family:var(--pixel);font-size:11px;display:flex;align-items:center;gap:6px;cursor:default}
+  .tag-pill button{background:none;border:none;color:#fff;cursor:pointer;font-size:14px;line-height:1;padding:0}
+
+  .modal-btns { display:flex;gap:12px;margin-top:24px; }
+  .btn-primary { flex:1;background:var(--primary);color:#fff;border:none;border-radius:12px;padding:13px;font-family:var(--pixel);font-size:13px;font-weight:700;cursor:pointer;box-shadow:0 3px 0 var(--primary-dark);transition:transform .1s,box-shadow .1s; }
+  .btn-primary:hover{transform:translateY(-2px);box-shadow:0 5px 0 var(--primary-dark)}
+  .btn-primary:active{transform:translateY(1px);box-shadow:0 2px 0 var(--primary-dark)}
+  .btn-secondary { flex:1;background:var(--bg2);color:var(--text);border:2px solid var(--border);border-radius:12px;padding:13px;font-family:var(--pixel);font-size:13px;cursor:pointer;transition:background .2s; }
+  .btn-secondary:hover{background:var(--border)}
+
+  /* パスワードモーダル */
+  .pw-modal { max-width:360px; }
+  .pw-modal h3{text-align:center}
+  .pw-icon{text-align:center;font-size:48px;margin-bottom:8px}
+  .pw-error{font-family:var(--pixel);font-size:12px;color:#e53935;text-align:center;margin-top:8px;min-height:20px}
+
+  /* FOOTER */
+  footer { background:var(--text);color:rgba(255,255,255,.6);text-align:center;padding:24px;font-family:var(--pixel);font-size:11px;letter-spacing:1px; }
+  footer span{color:var(--primary-light)}
+
+  @media(max-width:700px){
+    .header-inner{padding:20px 24px;flex-wrap:wrap}
+    .header-badges{display:none}
+    main{padding:24px 24px 60px}
+    nav ul{padding:0 8px}
+    nav a{padding:12px 12px;font-size:11px}
+    .hero-card{grid-template-columns:1fr}
+    .event-card{grid-template-columns:60px 1fr}
+    .event-status{display:none}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo-wrap">
+      <svg width="72" height="72" viewBox="0 0 16 16" style="image-rendering:pixelated" xmlns="http://www.w3.org/2000/svg">
+        <rect x="4" y="10" width="8" height="3" fill="#222"/>
+        <rect x="3" y="7" width="10" height="6" fill="#fff9f0"/>
+        <rect x="2" y="8" width="12" height="5" fill="#fff9f0"/>
+        <rect x="4" y="5" width="8" height="3" fill="#fff9f0"/>
+        <rect x="5" y="3" width="6" height="3" fill="#fff9f0"/>
+        <rect x="6" y="2" width="4" height="2" fill="#fff9f0"/>
+        <rect x="7" y="1" width="2" height="2" fill="#fff9f0"/>
+        <rect x="2" y="12" width="12" height="1" fill="#f0e0c0" opacity="0.5"/>
+        <rect x="7" y="8" width="1" height="1" fill="#333" opacity="0.4"/>
+        <rect x="9" y="9" width="1" height="1" fill="#333" opacity="0.4"/>
+        <rect x="5" y="9" width="1" height="1" fill="#333" opacity="0.4"/>
+      </svg>
+    </div>
+    <div class="guild-title">
+      <div class="tag">MapleStory Guild</div>
+      <h1>もぐもぐ団</h1>
+      <div class="sub">みんなでもぐもぐ、楽しいメイプルを。</div>
+    </div>
+    <div class="header-badges">
+      <div class="badge yellow">🍙 初心者大歓迎</div>
+      <div class="badge green">💬 Discord あり</div>
+      <div class="badge">📍 エウレル 16ch</div>
+    </div>
+  </div>
+</header>
+
+<nav>
+  <ul>
+    <li><a class="active" data-section="top">🏠 トップ</a></li>
+    <li><a data-section="members">👥 メンバー</a></li>
+    <li><a data-section="events">📅 イベント</a></li>
+  </ul>
+</nav>
+
+<main>
+
+  <!-- TOP -->
+  <section id="top" class="section active">
+    <div class="hero-card">
+      <div class="hero-left">
+        <h3>🍙 もぐもぐ団へようこそ</h3>
+        <p>
+          ここは、<span class="highlight">ゆるく楽しく</span>メイプルを遊ぶためのギルドです。<br><br>
+          ガチで狩りを極めたい人も、まったりチャットを楽しみたい人も、<span class="highlight">初めてギルドに入る初心者さん</span>も、全員歓迎！<br><br>
+          たまり場は<strong>エウレル16ch</strong>。行くと大体誰かいるよ🎉<br><br>
+          加入したい方はゲーム内でマスターに声をかけてね！
+        </p>
+      </div>
+      <div class="info-grid">
+        <div class="info-item"><span class="label">🎮 ワールド</span><span class="value">（ワールド名）</span></div>
+        <div class="info-item"><span class="label">📍 たまり場</span><span class="value">エウレル 16ch</span></div>
+        <div class="info-item"><span class="label">💬 Discord</span><a href="#" class="value">招待リンクをここに</a></div>
+        <div class="info-item"><span class="label">👑 マスター</span><span class="value">（マスター名）</span></div>
+        <div class="info-item"><span class="label">👥 人数</span><span class="value">（人数）名</span></div>
+        <div class="info-item"><span class="label">🔰 加入</span><span class="value">随時募集中！</span></div>
+      </div>
+    </div>
+    <div class="discord-banner">
+      <div class="discord-icon">💬</div>
+      <div class="discord-text">
+        <div class="title">Discord サーバーあります！</div>
+        <div class="sub">VCも活発。もぐもぐしながら話そう🎙️</div>
+      </div>
+      <a href="#" class="discord-btn">参加する →</a>
+    </div>
+  </section>
+
+  <!-- MEMBERS -->
+  <section id="members" class="section">
+    <div class="section-title">
+      <div class="icon">👥</div>
+      <h2>メンバー紹介</h2>
+      <span class="count" id="member-count">0名</span>
+    </div>
+    <div class="member-grid" id="member-grid">
+      <!-- JS で描画 -->
+      <div class="add-member-card" id="add-btn" onclick="openPasswordModal()">
+        <div class="plus">＋</div>
+        <div class="txt">メンバーを追加<br>（パスワード必要）</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENTS -->
+  <section id="events" class="section">
+    <div class="section-title">
+      <div class="icon">📅</div>
+      <h2>イベント予定 / 報告</h2>
+      <span class="count">随時更新</span>
+    </div>
+    <div class="event-list">
+      <div class="event-card">
+        <div class="event-date"><div class="month">未定</div><div class="day">?</div></div>
+        <div class="event-info">
+          <div class="title">🎉 ギルドイベント（例：カオスボス討伐）</div>
+          <div class="desc">マスターからイベント内容を聞いて追加します。日程・内容・参加条件など。</div>
+        </div>
+        <span class="event-status tbd">調整中</span>
+      </div>
+      <div class="event-card">
+        <div class="event-date"><div class="month">定期</div><div class="day">VC</div></div>
+        <div class="event-info">
+          <div class="title">💬 Discord ボイスチャットDay</div>
+          <div class="desc">エウレル16chに集合してVCしながらまったり狩りや会話を楽しむ会。</div>
+        </div>
+        <span class="event-status upcoming">開催中</span>
+      </div>
+      <div class="event-card" style="opacity:.5">
+        <div class="event-date" style="background:var(--text-light)"><div class="month">過去</div><div class="day">—</div></div>
+        <div class="event-info">
+          <div class="title">📸 イベント報告写真はここに追加</div>
+          <div class="desc">スクショや活動記録をここに掲載予定です。</div>
+        </div>
+        <span class="event-status done">終了</span>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <p>🍙 <span>もぐもぐ団</span> — MapleStory Guild © 2025 &nbsp;|&nbsp; みんなでもぐもぐ楽しもう</p>
+</footer>
+
+<!-- ===== パスワードモーダル ===== -->
+<div class="overlay" id="pw-overlay">
+  <div class="modal pw-modal">
+    <button class="modal-close" onclick="closeModal('pw-overlay')">✕</button>
+    <div class="pw-icon">🔒</div>
+    <h3>パスワードを入力</h3>
+    <div class="form-row" style="margin-top:16px">
+      <input type="password" id="pw-input" placeholder="パスワード" onkeydown="if(event.key==='Enter')checkPassword()">
+    </div>
+    <div class="pw-error" id="pw-error"></div>
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeModal('pw-overlay')">キャンセル</button>
+      <button class="btn-primary" onclick="checkPassword()">🍙 入る</button>
+    </div>
+  </div>
+</div>
+
+<!-- ===== メンバー追加モーダル ===== -->
+<div class="overlay" id="add-overlay">
+  <div class="modal">
+    <button class="modal-close" onclick="closeModal('add-overlay')">✕</button>
+    <h3>👤 メンバーを追加</h3>
+
+    <div class="form-row">
+      <label>📸 キャラ画像（任意）</label>
+      <div class="img-upload-area" id="upload-area">
+        <input type="file" accept="image/*" id="img-input" onchange="previewImage(this)">
+        <img class="preview" id="img-preview" src="" alt="">
+        <div id="upload-placeholder">
+          <div class="upload-icon">🖼️</div>
+          <div class="placeholder-txt">クリックして画像を選択<br>キャラのスクショなどをどうぞ</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-row">
+      <label>📛 キャラクター名 *</label>
+      <input type="text" id="f-name" placeholder="IGN（ゲーム内キャラ名）">
+    </div>
+    <div class="form-row">
+      <label>⭐ 役職</label>
+      <select id="f-role">
+        <option value="">一般メンバー</option>
+        <option value="master">👑 マスター</option>
+        <option value="sub">⭐ サブマスター</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>⚔️ クラス</label>
+      <input type="text" id="f-class" placeholder="例：アークメイジ（炎・毒）">
+    </div>
+    <div class="form-row">
+      <label>💬 自己紹介</label>
+      <textarea id="f-bio" placeholder="ひとこと自己紹介や普段のプレイスタイルなど"></textarea>
+    </div>
+    <div class="form-row">
+      <label>🏷️ 趣味・タグ（Enterで追加）</label>
+      <div class="tags-input" id="tags-wrap">
+        <input type="text" id="tag-input" placeholder="例：釣り、ゲーム…" onkeydown="addTagOnEnter(event)">
+      </div>
+      <div class="hint">Enterキーで追加、×で削除</div>
+    </div>
+
+    <div class="modal-btns">
+      <button class="btn-secondary" onclick="closeModal('add-overlay')">キャンセル</button>
+      <button class="btn-primary" onclick="saveNewMember()">🍙 追加する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ===== パスワード設定（ここを変更してね）=====
+const GUILD_PASSWORD = 'mogumogidan';
+// ============================================
+
+let members = JSON.parse(localStorage.getItem('mmd_members') || '[]');
+let currentTags = [];
+let currentImgData = null;
+
+// ナビ切り替え
+document.querySelectorAll('nav a').forEach(a => {
+  a.addEventListener('click', function() {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('nav a').forEach(x => x.classList.remove('active'));
+    document.getElementById(this.dataset.section).classList.add('active');
+    this.classList.add('active');
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// メンバー描画
+function renderMembers() {
+  const grid = document.getElementById('member-grid');
+  const addBtn = document.getElementById('add-btn');
+  grid.innerHTML = '';
+
+  // ロール順にソート: master > sub > ''
+  const order = { master: 0, sub: 1, '': 2 };
+  const sorted = [...members].sort((a, b) => (order[a.role] ?? 2) - (order[b.role] ?? 2));
+
+  sorted.forEach((m, i) => {
+    const origIdx = members.indexOf(m);
+    const card = document.createElement('div');
+    card.className = 'member-card';
+    card.innerHTML = `
+      ${m.role === 'master' ? '<span class="member-role-badge master">👑 マスター</span>' :
+        m.role === 'sub'    ? '<span class="member-role-badge sub">⭐ サブマス</span>' : ''}
+      <div class="member-avatar">
+        ${m.img ? `<img src="${m.img}" alt="${m.name}">` : '🍙'}
+      </div>
+      <div class="member-name">${escHtml(m.name)}</div>
+      <div class="member-class">${escHtml(m.klass) || '　'}</div>
+      <div class="member-bio">${escHtml(m.bio) || '　'}</div>
+      <div class="member-tags">${(m.tags||[]).map(t=>`<span class="tag-chip">${escHtml(t)}</span>`).join('')}</div>
+      <button class="member-delete" onclick="deleteMember(${origIdx})" title="削除">🗑️</button>
+    `;
+    grid.appendChild(card);
+  });
+
+  grid.appendChild(addBtn);
+  document.getElementById('member-count').textContent = members.length + '名';
+}
+
+function escHtml(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function deleteMember(idx) {
+  if (!confirm(`「${members[idx].name}」を削除しますか？`)) return;
+  members.splice(idx, 1);
+  localStorage.setItem('mmd_members', JSON.stringify(members));
+  renderMembers();
+}
+
+// ===== パスワードモーダル =====
+function openPasswordModal() {
+  document.getElementById('pw-input').value = '';
+  document.getElementById('pw-error').textContent = '';
+  openModal('pw-overlay');
+  setTimeout(() => document.getElementById('pw-input').focus(), 100);
+}
+
+function checkPassword() {
+  const val = document.getElementById('pw-input').value;
+  if (val === GUILD_PASSWORD) {
+    closeModal('pw-overlay');
+    openAddModal();
+  } else {
+    document.getElementById('pw-error').textContent = 'パスワードが違います 🔒';
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+// ===== 追加モーダル =====
+function openAddModal() {
+  // リセット
+  document.getElementById('f-name').value = '';
+  document.getElementById('f-role').value = '';
+  document.getElementById('f-class').value = '';
+  document.getElementById('f-bio').value = '';
+  document.getElementById('tag-input').value = '';
+  document.getElementById('img-preview').style.display = 'none';
+  document.getElementById('upload-placeholder').style.display = 'block';
+  document.getElementById('img-input').value = '';
+  currentTags = [];
+  currentImgData = null;
+  renderTagPills();
+  openModal('add-overlay');
+}
+
+function saveNewMember() {
+  const name = document.getElementById('f-name').value.trim();
+  if (!name) { alert('キャラクター名は必須です！'); return; }
+  members.push({
+    name,
+    role: document.getElementById('f-role').value,
+    klass: document.getElementById('f-class').value.trim(),
+    bio: document.getElementById('f-bio').value.trim(),
+    tags: [...currentTags],
+    img: currentImgData
+  });
+  localStorage.setItem('mmd_members', JSON.stringify(members));
+  closeModal('add-overlay');
+  renderMembers();
+}
+
+// ===== タグ =====
+function addTagOnEnter(e) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const val = e.target.value.trim();
+  if (val && !currentTags.includes(val) && currentTags.length < 8) {
+    currentTags.push(val);
+    renderTagPills();
+    e.target.value = '';
+  }
+}
+function removeTag(t) {
+  currentTags = currentTags.filter(x => x !== t);
+  renderTagPills();
+}
+function renderTagPills() {
+  const wrap = document.getElementById('tags-wrap');
+  const inp = document.getElementById('tag-input');
+  wrap.innerHTML = '';
+  currentTags.forEach(t => {
+    const pill = document.createElement('span');
+    pill.className = 'tag-pill';
+    pill.innerHTML = `${escHtml(t)}<button onclick="removeTag('${t.replace(/'/g,"\\'")}')">×</button>`;
+    wrap.appendChild(pill);
+  });
+  wrap.appendChild(inp);
+}
+
+// ===== 画像プレビュー =====
+function previewImage(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    currentImgData = e.target.result;
+    const preview = document.getElementById('img-preview');
+    preview.src = currentImgData;
+    preview.style.display = 'block';
+    document.getElementById('upload-placeholder').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+}
+
+// ===== モーダル制御 =====
+function openModal(id) { document.getElementById(id).classList.add('open'); }
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if (e.target === o) closeModal(o.id); });
+});
+
+// 初期描画
+renderMembers();
+</script>
+</body>
+</html>
